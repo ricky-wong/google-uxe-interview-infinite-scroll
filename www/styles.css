@@ -34,10 +34,38 @@ body {
 .message {
   margin-top: 10px;
   padding: 15px;
-  font-size: 14px;
-  font-weight: 400;
   border: 1px solid #d6d6d6;
   box-shadow: 0 1px 1px #bababa;
+  line-height: 20px;
+  font-size: 14px;
+}
+.userinfo {
+  clear: both;
+  padding-bottom: 10px;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.message-content {
+  clear: both;
+  padding-top: 15px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+}
+.name, .timestamp {
+  padding-left: 70px;
+}
+.name {
+  font-weight: 500;
 }
 
 /* loading.io ellipsis */

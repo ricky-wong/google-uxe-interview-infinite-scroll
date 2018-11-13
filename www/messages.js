@@ -42,9 +42,44 @@ function hideLoadingError() {
   }
 }
 
+function formatTime(timestamp) {
+  const then = new Date(timestamp).getTime();
+  const now = new Date().getTime();
+  // For testing purposes, pretend that the current time is closer to the actual messages,
+  // so that we can see more relative times in action.
+  //const now = new Date('2015-02-01T07:47:24Z').getTime();
+
+  // Say "ago"... but if this message is from the future, say it's from the future
+  const ending = (now - then) < 0 ? ' in the future' : ' ago';
+
+  const ms = Math.abs(now - then);
+  const seconds = Math.round(ms / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const weeks = Math.round(days / 7);
+  const years = Math.round(weeks / 52);
+
+  // If it's 1 hour ago or more, it might be useful for us to just return
+  // an absolute time. We don't really have a spec on this.
+  if (years > 0) {
+    return years + ' year' + (years > 1 ? 's' : '') + ending;
+  } else if (weeks > 0) {
+    return weeks + ' week' + (weeks > 1 ? 's' : '') + ending;
+  } else if (days > 0) {
+    return days + ' day' + (days > 1 ? 's' : '') + ending;
+  } else if (hours > 0) {
+    return hours + ' hour' + (hours > 1 ? 's' : '') + ending;
+  } else if (minutes > 0) {
+    return minutes + ' minute' + (minutes > 1 ? 's' : '') + ending;
+  } else {
+    return seconds + ' second' + (seconds > 1 ? 's' : '') + ending;
+  }
+}
+
 // Takes care of the actual fetch() call and response
 function fetchMessages() {
-  return fetch('//message-list.appspot.com/messages'
+  return fetch('https://message-list.appspot.com/messages'
     + '?limit=' + MESSAGES_TO_FETCH_AT_ONCE
     + (nextPageToken ? '&pageToken=' + nextPageToken : '')
   )
@@ -96,7 +131,18 @@ function appendMessages(messages) {
   messages.forEach((message) => {
     const li = document.createElement('li');
     li.classList.add('message');
-    li.innerText = message.content;
+    // It's unsafe to put externally-provided data into innerHTML,
+    // but this isn't a secure application, and we trust the source (for now).
+    li.innerHTML = `
+    <div class="userinfo">
+      <img class="left photo" src="https://message-list.appspot.com${message.author.photoUrl}"/>
+      <div class="name">${message.author.name}</div>
+      <div class="timestamp">${formatTime(message.updated)}</div>
+    </div>
+    <div class="message-content">
+      ${message.content}
+    </div>
+    `;
     fragment.appendChild(li);
   });
 
