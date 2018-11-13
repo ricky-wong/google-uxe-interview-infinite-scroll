@@ -1,4 +1,4 @@
-//(function(scope) {
+(function(scope) {
 
 let requestInProgress = false;
 
@@ -172,4 +172,4 @@ document.addEventListener('resize', onResize);
 
 loadingError.addEventListener('click', maybeRequestMessages);
 
-//})(self);
+})(self);
