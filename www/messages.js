@@ -53,6 +53,7 @@ function appendMessages(messages) {
   const fragment = document.createDocumentFragment();
   messages.forEach((message) => {
     const li = document.createElement('li');
+    li.classList.add('message');
     li.innerText = message.content;
     fragment.appendChild(li);
   });
@@ -61,5 +62,7 @@ function appendMessages(messages) {
 
   return;
 }
+
+maybeRequestMessages();
 
 //})(self);

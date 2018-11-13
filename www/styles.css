@@ -26,7 +26,16 @@ body {
   padding: 20px;
 }
 
+#messages {
+  padding: 70px 20px 20px 20px;
+  list-style: none;
+}
+
 .message {
+  margin-top: 10px;
+  padding: 15px;
   font-size: 14px;
   font-weight: 400;
+  border: 1px solid #d6d6d6;
+  box-shadow: 0 1px 1px #bababa;
 }
