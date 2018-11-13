@@ -1,7 +1,9 @@
 Infinitely-Scrolling Message List
 ===
 
-Limited functionality: Messages load over the network, and you can swipe horizontally to dismiss a message.
+Limited functionality: Messages load over the network, and you can load more messages from scrolling. All done with native JS, no libraries to keep it lean while features are still simple.
+
+Not done: swipe to remove a message. Might need to involve some libraries for this.
 
 Process:
 1. I started with looking through Firebase and App Engine docs to figure out how to bootstrap a static site. Because I'm just serving some HTML/CSS/JS (no backend, database, authentication...), I went with App Engine.
@@ -11,11 +13,14 @@ Process:
 5. I added loading spinners and error handling for the API call. I decided to leave static elements on the page, and show/hide them. The error handling itself is a bit messy - I'm still getting used to ES6 promises and `fetch()`.
 6. I wrote this document up to this point, mostly derived from my Git logs. If I didn't have those logs, I probably would've started even sooner.
 6. I finally filled in usernames/timestamps/photos. I had to come up with conversions from absolute to relative time, and it was a bit problematic that all of the sample data referenced chats around February 2015. To test, I could've written some tests, but alternatively, I just set my "now" time to February 2015, and we get a nicer flavor of the time-conversion in action.
-7. I added the horizontal swipe feature.
+7. I added the horizontal swipe feature. (or tried to.)
 8. Wrapping up the submission (this document, uploading source, hosting a demo)
 
 Some things I'd do with more time:
+- Finish the swipe feature.
+- Don't leave a big `innerHTML` security hole.
 - Organize code a little more. There are a few different responsibilities here, already.
 - Next level of organizing code could involve using a framework for storing messages in a collection, and rendering views of messages based on data. However, our requirements are quite simple, we don't have much interactivity, and our collection of messages doesn't change very much.
 - Recalculate relative timestamps as the page stays open.
-- If it's 1 hour ago or more, it might be useful for us to just return an absolute time. We don't really have a spec on this.
+- If the message is older than 1 hour, it might be useful for us to just show an absolute time. We don't really have a spec on this.
+- Figure out the best practice for catching network errors in ES6 Promises, without catching everything (non-network errors).
