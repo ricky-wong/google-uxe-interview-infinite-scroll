@@ -14,17 +14,43 @@ let currentLoadedCount = 0;
 */
 
 // Keep it simple. 10 messages at once, display once we fetch, don't store in memory.
-const MESSAGES_TO_FETCH_AT_ONCE = 10;
+const MESSAGES_TO_FETCH_AT_ONCE = 20;
 let nextPageToken;
 const messagesUl = document.getElementById('messages');
 
+// Convenience functions to hide/show the loading spinner.
+const loading = document.getElementById('loading');
+function showLoading() {
+  loading.style.display = 'block';
+}
+function hideLoading() {
+  loading.style.display = 'none';
+}
+
+// Convenience functions to hide/show the loading error.
+const loadingError = document.getElementById('loading-error');
+// Use a variable here, to avoid constantly checking the DOM in this less-common case.
+let loadingErrorShown = false;
+function showLoadingError() {
+  loadingErrorShown = true;
+  loadingError.style.display = 'block';
+}
+function hideLoadingError() {
+  if (loadingErrorShown) {
+    loadingErrorShown = false;
+    loadingError.style.display = 'none';
+  }
+}
+
+// Takes care of the actual fetch() call and response
 function fetchMessages() {
   return fetch('//message-list.appspot.com/messages'
     + '?limit=' + MESSAGES_TO_FETCH_AT_ONCE
     + (nextPageToken ? '&pageToken=' + nextPageToken : '')
   )
   .then(function(response) {
-    if (response.status !== 200) {
+    if (!response.ok) {
+      throw new Error('Fetch failed', response);
       return;
     }
 
@@ -33,17 +59,33 @@ function fetchMessages() {
   .then(function(data) {
     nextPageToken = data.pageToken;
     return data;
+  })
+  .catch(function(error) {
+    return error;
   });
 }
 
+// Wrapper to be called many times.
+// Takes care of in-flight requests and error handling
 function maybeRequestMessages() {
   if (requestInProgress) {
     return;
   }
   requestInProgress = true;
-  fetchMessages().then(function(data) {
+  showLoading();
+  hideLoadingError();
+  fetchMessages()
+  .then(function(data) {
     appendMessages(data.messages);
     requestInProgress = false;
+    hideLoading();
+    hideLoadingError();
+  })
+  .catch(function(error) {
+    requestInProgress = false;
+    hideLoading();
+    showLoadingError();
+    return error;
   });
 }
 
@@ -63,6 +105,25 @@ function appendMessages(messages) {
   return;
 }
 
-maybeRequestMessages();
+document.addEventListener('DOMContentLoaded', function() {
+  maybeRequestMessages();
+});
+
+function nearBottom() {
+  return (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 200;
+}
+
+function onScroll() {
+  if (nearBottom()) {
+    maybeRequestMessages();
+  }
+}
+document.addEventListener('scroll', onScroll);
+function onResize() {
+  onScroll();
+}
+document.addEventListener('resize', onResize);
+
+loadingError.addEventListener('click', maybeRequestMessages);
 
 //})(self);
