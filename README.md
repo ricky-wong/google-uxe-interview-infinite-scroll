@@ -13,7 +13,7 @@ Process:
 5. I added loading spinners and error handling for the API call. I decided to leave static elements on the page, and show/hide them. The error handling itself is a bit messy - I'm still getting used to ES6 promises and `fetch()`.
 6. I wrote this document up to this point, mostly derived from my Git logs. If I didn't have those logs, I probably would've started even sooner.
 6. I finally filled in usernames/timestamps/photos. I had to come up with conversions from absolute to relative time, and it was a bit problematic that all of the sample data referenced chats around February 2015. To test, I could've written some tests, but alternatively, I just set my "now" time to February 2015, and we get a nicer flavor of the time-conversion in action.
-7. I added the horizontal swipe feature. (or tried to.)
+7. For the horizontal swipe feature, I'd start by Googling around for libraries to detect a swipe, and add some transition animation. There were bits and pieces everywhere, and I struggled to get `dragstart` to fire in Chrome (worked in Firefox). I went with a simple Hammer.js solution to detect a swipe and remove the message, but we need a lot of UI/UX added here (noted in code). The user should see a slow transition for "dragging", "going to delete this", and "deleting" states.
 8. Wrapping up the submission (this document, uploading source, hosting a demo)
 
 Some things I'd do with more time:
